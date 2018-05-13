@@ -1,26 +1,48 @@
 package com.example.dawid.musicplayer;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements LifecycleOwner
 {
     //private String storageDirectory;
     private RecyclerView trackList;
+    private ImageButton playButton;
+    private TextView currentTitleText;
+    private LifecycleRegistry lifecycleRegistry;
+    private MusicViewModel musicViewModel;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setupToolbar();
+        lifecycleRegistry = new LifecycleRegistry(this);
+        PlayerObserver playerObserver = new PlayerObserver(this);
+        setupUi();
+
         //storageDirectory = Environment.getExternalStorageDirectory().getPath() + "/music/";﻿
-        setupMusicList();
+
+
+        lifecycleRegistry.markState(Lifecycle.State.CREATED);
     }
 
     @Override
@@ -37,11 +59,21 @@ public class MainActivity extends AppCompatActivity
 
         switch (id)
         {
-            case R.id.action_settings:
+            case R.id.action_about:
+                startActivity(new Intent(this, AboutActivity.class));
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupUi()
+    {
+        setContentView(R.layout.activity_main);
+        currentTitleText = findViewById(R.id.current_title_text);
+        setupToolbar();
+        setupMusicList();
+        setupPlayPauseButton();
     }
 
     private void setupToolbar()
@@ -52,12 +84,46 @@ public class MainActivity extends AppCompatActivity
 
     private void setupMusicList()
     {
-        if(Data.getTracks()==null)
+        musicViewModel = ViewModelProviders.of(this).get(MusicViewModel.class);
+        musicViewModel.getTrackData().observe(this, new Observer<TrackData>()
         {
-            Data.loadTracks();
-        }
+            @Override
+            public void onChanged(@Nullable TrackData trackData)
+            {
+                Track currentTrack = trackData.getCurrentTrack();
+                if(currentTrack != null)
+                {
+                    currentTitleText.setText(currentTrack.getTrackTitle());
+                }
+                else
+                {
+                    currentTitleText.setText("");
+                }
+            }
+        });
+        musicViewModel.initMusicData();
         trackList = findViewById(R.id.music_list);
         trackList.setLayoutManager(new LinearLayoutManager(this));
-        trackList.setAdapter(new TrackAdapter(this, Data.getTracks(), trackList));
+        trackList.setAdapter(new TrackAdapter(this, musicViewModel.getTrackData(), trackList));
+    }
+
+    private void setupPlayPauseButton()
+    {
+        playButton = findViewById(R.id.play_pause_button);
+        playButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                CustomMediaPlayer.getInstance().startPlaying();
+            }
+        });
+    }
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle()
+    {
+        return lifecycleRegistry;
     }
 }

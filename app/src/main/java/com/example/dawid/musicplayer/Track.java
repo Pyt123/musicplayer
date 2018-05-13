@@ -5,9 +5,9 @@ public class Track
     private int trackId;
     private String trackTitle;
     private String trackAuthor;
-    private float trackLength;
+    private int trackLength;
 
-    public Track(int trackId, String trackTitle, String trackAuthor, float trackLength)
+    public Track(int trackId, String trackTitle, String trackAuthor, int trackLength)
     {
         this.trackId = trackId;
         this.trackTitle = trackTitle;

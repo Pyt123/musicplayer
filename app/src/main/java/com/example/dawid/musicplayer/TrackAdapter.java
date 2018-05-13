@@ -1,5 +1,6 @@
 package com.example.dawid.musicplayer;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -9,16 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import java.util.List;
-
-
 public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener
 {
     private Context context = null;
-    private List<Track> data = null;
+    private LiveData<TrackData> data = null;
 
-    public TrackAdapter(Context context, List<Track> data, RecyclerView recyclerView)
+    public TrackAdapter(Context context, LiveData<TrackData> data, RecyclerView recyclerView)
     {
         super();
         this.context = context;
@@ -53,6 +51,9 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             public void onClick(View view)
             {
                 int idOfTrackInData = item.getLayoutPosition();
+                int trackId = data.getValue().getTracks().get(idOfTrackInData).getTrackId();
+                data.getValue().setCurrentTrack(idOfTrackInData);
+                CustomMediaPlayer.getInstance().startNewTrack(context, trackId);
             }
         });
     }
@@ -60,7 +61,7 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
     {
-        Track track = data.get(position);
+        Track track = data.getValue().getTracks().get(position);
         Item item = (Item)holder;
         item.titleView.setText(track.getTrackTitle());
         item.authorView.setText(track.getTrackAuthor());
@@ -70,7 +71,7 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public int getItemCount()
     {
-        return data.size();
+        return data.getValue().getTracks().size();
     }
 
     @Override
@@ -84,7 +85,7 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private void removeItemOnPosition(int position)
     {
-        data.remove(position);
+        data.getValue().getTracks().remove(position);
         notifyItemRemoved(position);
     }
 
