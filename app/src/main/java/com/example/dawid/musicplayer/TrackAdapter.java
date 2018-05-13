@@ -1,6 +1,5 @@
 package com.example.dawid.musicplayer;
 
-import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -37,35 +36,26 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View row = inflater.inflate(R.layout.track_row, parent, false);
         final Item item = new Item(row);
-
-        setClickListenerForItem(item);
-
+        
         return item;
     }
 
-    private void setClickListenerForItem(final Item item)
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position)
     {
-        item.itemView.setOnClickListener(new View.OnClickListener()
+        Track track = data.getTracks().get(position);
+        final Item item = (Item)holder;
+        item.titleView.setText(track.getTrackTitle());
+        item.authorView.setText(track.getTrackAuthor());
+        item.lengthView.setText(track.getTrackLength());
+        item.playButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                int idOfTrackInData = item.getLayoutPosition();
-                int trackId = data.getTracks().get(idOfTrackInData).getTrackId();
-                data.setCurrentTrack(idOfTrackInData);
-                CustomMediaPlayer.getInstance().startNewTrack(context, trackId);
+                CustomMediaPlayer.getInstance().startNewTrack(context, data.getTracks().get(position).getTrackId());
             }
         });
-    }
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
-    {
-        Track track = data.getTracks().get(position);
-        Item item = (Item)holder;
-        item.titleView.setText(track.getTrackTitle());
-        item.authorView.setText(track.getTrackAuthor());
-        item.lengthView.setText(track.getTrackLength());
     }
 
     @Override
