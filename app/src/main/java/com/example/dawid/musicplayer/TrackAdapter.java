@@ -14,9 +14,9 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener
 {
     private Context context = null;
-    private LiveData<TrackData> data = null;
+    private TrackData data = null;
 
-    public TrackAdapter(Context context, LiveData<TrackData> data, RecyclerView recyclerView)
+    public TrackAdapter(Context context, TrackData data, RecyclerView recyclerView)
     {
         super();
         this.context = context;
@@ -51,8 +51,8 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             public void onClick(View view)
             {
                 int idOfTrackInData = item.getLayoutPosition();
-                int trackId = data.getValue().getTracks().get(idOfTrackInData).getTrackId();
-                data.getValue().setCurrentTrack(idOfTrackInData);
+                int trackId = data.getTracks().get(idOfTrackInData).getTrackId();
+                data.setCurrentTrack(idOfTrackInData);
                 CustomMediaPlayer.getInstance().startNewTrack(context, trackId);
             }
         });
@@ -61,7 +61,7 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
     {
-        Track track = data.getValue().getTracks().get(position);
+        Track track = data.getTracks().get(position);
         Item item = (Item)holder;
         item.titleView.setText(track.getTrackTitle());
         item.authorView.setText(track.getTrackAuthor());
@@ -71,7 +71,7 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public int getItemCount()
     {
-        return data.getValue().getTracks().size();
+        return data.getTracks().size();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private void removeItemOnPosition(int position)
     {
-        data.getValue().getTracks().remove(position);
+        data.getTracks().remove(position);
         notifyItemRemoved(position);
     }
 

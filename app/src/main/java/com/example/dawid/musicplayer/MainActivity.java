@@ -3,7 +3,6 @@ package com.example.dawid.musicplayer;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -37,10 +36,10 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
         super.onCreate(savedInstanceState);
         lifecycleRegistry = new LifecycleRegistry(this);
         PlayerObserver playerObserver = new PlayerObserver(this);
+        musicViewModel = ViewModelProviders.of(this).get(MusicViewModel.class);
         setupUi();
 
         //storageDirectory = Environment.getExternalStorageDirectory().getPath() + "/music/";﻿
-
 
         lifecycleRegistry.markState(Lifecycle.State.CREATED);
     }
@@ -70,9 +69,9 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
     private void setupUi()
     {
         setContentView(R.layout.activity_main);
-        currentTitleText = findViewById(R.id.current_title_text);
         setupToolbar();
-        setupMusicList();
+        setupMusicRecyclerView();
+        setupCurrentTrackTitleView();
         setupPlayPauseButton();
     }
 
@@ -82,18 +81,18 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
         setSupportActionBar(toolbar);
     }
 
-    private void setupMusicList()
+    private void setupCurrentTrackTitleView()
     {
-        musicViewModel = ViewModelProviders.of(this).get(MusicViewModel.class);
-        musicViewModel.getTrackData().observe(this, new Observer<TrackData>()
+        currentTitleText = findViewById(R.id.current_title_text);
+        currentTitleText.setText("");
+        musicViewModel.getTrackData().getLiveDataCurrentTrack().observe(this, new Observer<Track>()
         {
             @Override
-            public void onChanged(@Nullable TrackData trackData)
+            public void onChanged(@Nullable Track track)
             {
-                Track currentTrack = trackData.getCurrentTrack();
-                if(currentTrack != null)
+                if(track != null)
                 {
-                    currentTitleText.setText(currentTrack.getTrackTitle());
+                    currentTitleText.setText(track.getTrackTitle());
                 }
                 else
                 {
@@ -101,7 +100,10 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
                 }
             }
         });
-        musicViewModel.initMusicData();
+    }
+
+    private void setupMusicRecyclerView()
+    {
         trackList = findViewById(R.id.music_list);
         trackList.setLayoutManager(new LinearLayoutManager(this));
         trackList.setAdapter(new TrackAdapter(this, musicViewModel.getTrackData(), trackList));

@@ -1,11 +1,10 @@
 package com.example.dawid.musicplayer;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 public class MusicViewModel extends ViewModel
 {
-    private MutableLiveData<TrackData> trackData;
+    private TrackData trackData;
 
     public MusicViewModel()
     {
@@ -13,13 +12,7 @@ public class MusicViewModel extends ViewModel
         trackData = new TrackData();
     }
 
-    public void initMusicData()
-    {
-        TrackData td = new TrackData();
-        this.trackData.setValue(td);
-    }
-
-    public MutableLiveData<TrackData> getTrackData()
+    public TrackData getTrackData()
     {
         return trackData;
     }
