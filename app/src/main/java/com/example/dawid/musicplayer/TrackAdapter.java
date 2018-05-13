@@ -1,6 +1,11 @@
 package com.example.dawid.musicplayer;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
@@ -8,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import java.util.List;
 
 public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener
@@ -36,14 +43,14 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View row = inflater.inflate(R.layout.track_row, parent, false);
         final Item item = new Item(row);
-        
+
         return item;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position)
     {
-        Track track = data.getTracks().get(position);
+        final Track track = data.getTracks().get(position);
         final Item item = (Item)holder;
         item.titleView.setText(track.getTrackTitle());
         item.authorView.setText(track.getTrackAuthor());
@@ -53,7 +60,7 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             @Override
             public void onClick(View view)
             {
-                CustomMediaPlayer.getInstance().startNewTrack(context, data.getTracks().get(position).getTrackId());
+                CustomMediaPlayer.getInstance().startNewTrack(context, track.getTrackId());
             }
         });
     }

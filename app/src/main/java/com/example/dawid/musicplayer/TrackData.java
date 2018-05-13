@@ -41,22 +41,17 @@ public final class TrackData
         }
     }
 
-    public Track getCurrentTrack()
-    {
-        return liveDataCurrentTrack.getValue();
-    }
-
     public List<Track> getTracks()
     {
         return liveDataTrackList.getValue();
     }
 
-    public LiveData<Track> getLiveDataCurrentTrack()
+    public MutableLiveData<Track> getLiveDataCurrentTrack()
     {
         return liveDataCurrentTrack;
     }
 
-    public LiveData<List<Track>> getLiveDataTrackList()
+    public MutableLiveData<List<Track>> getLiveDataTrackList()
     {
         return liveDataTrackList;
     }
