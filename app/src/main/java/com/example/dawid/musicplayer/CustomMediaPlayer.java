@@ -1,18 +1,48 @@
 package com.example.dawid.musicplayer;
 
-import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.media.MediaPlayer;
 
 public class CustomMediaPlayer
 {
+    public enum PlayerState {TrackNotSet, Prepared, Paused, Playing}
+
     private static CustomMediaPlayer instance = new CustomMediaPlayer();
+    private MutableLiveData<PlayerState> playerStateLiveData = new MutableLiveData<>();
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private TrackData trackData;
 
     private CustomMediaPlayer()
     {
         trackData = new TrackData();
+        playerStateLiveData.setValue(PlayerState.TrackNotSet);
+        new Thread()
+        {
+            @Override
+            public void run()
+            {
+                while(true)
+                {
+                    if(playerStateLiveData.getValue() == PlayerState.Playing)
+                    {
+                        synchronized (mediaPlayer)
+                        {
+                            if (mediaPlayer.getCurrentPosition() >= mediaPlayer.getDuration())
+                            {
+                                playerStateLiveData.postValue(PlayerState.Prepared);
+                            }
+                        }
+                    }
+
+                    synchronized (this)
+                    {
+                        try { wait(50);}
+                        catch (InterruptedException e) { e.printStackTrace(); }
+                    }
+                }
+            }
+        }.start();
     }
 
     public static CustomMediaPlayer getInstance()
@@ -23,6 +53,11 @@ public class CustomMediaPlayer
     public TrackData getTrackData()
     {
         return trackData;
+    }
+
+    public MutableLiveData<PlayerState> getPlayerStateLiveData()
+    {
+        return playerStateLiveData;
     }
 
     public void startNewTrack(Context context, int trackId)
@@ -39,28 +74,40 @@ public class CustomMediaPlayer
 
     public void setNewTrack(Context context, int trackId)
     {
+        mediaPlayer.reset();
+        mediaPlayer.release();
         mediaPlayer = MediaPlayer.create(context, trackId);
         mediaPlayer.seekTo(0);
         trackData.setCurrentTrack(trackId);
+        playerStateLiveData.setValue(PlayerState.Prepared);
     }
 
     public void startPlaying()
     {
         mediaPlayer.start();
+        playerStateLiveData.setValue(PlayerState.Playing);
     }
 
     public void stopPlaying()
     {
-        mediaPlayer.stop();
+        if(playerStateLiveData.getValue() != PlayerState.TrackNotSet)
+        {
+            mediaPlayer.stop();
+        }
+        playerStateLiveData.setValue(PlayerState.Prepared);
     }
 
     public void pausePlaying()
     {
         mediaPlayer.pause();
+        playerStateLiveData.setValue(PlayerState.Paused);
     }
 
     public void moveTime(int milisecs)
     {
+        if(playerStateLiveData.getValue() == PlayerState.TrackNotSet)
+            return;
+
         int targetTime = mediaPlayer.getCurrentPosition() + milisecs;
         if(targetTime > mediaPlayer.getDuration())
         {
@@ -81,11 +128,11 @@ public class CustomMediaPlayer
 
     public void handleStartPauseButtonClicked()
     {
-        if(mediaPlayer.isPlaying())
+        if(playerStateLiveData.getValue() == PlayerState.Playing)
         {
             pausePlaying();
         }
-        else
+        else if(playerStateLiveData.getValue() != PlayerState.TrackNotSet)
         {
             startPlaying();
         }

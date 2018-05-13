@@ -16,7 +16,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -27,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
     private LifecycleRegistry lifecycleRegistry;
     private MusicViewModel musicViewModel;
     private SeekBar seekBar;
+    private ImageButton playButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
         setupPlayPauseButton();
         setupForwardButton();
         setupBackwardButton();
+        setupPlayerStateObserving();
     }
 
     private void setupToolbar()
@@ -106,6 +107,33 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
         });
     }
 
+    private void setupPlayerStateObserving()
+    {
+        CustomMediaPlayer.getInstance().getPlayerStateLiveData().observe(this, new Observer<CustomMediaPlayer.PlayerState>()
+        {
+            @Override
+            public void onChanged(@Nullable CustomMediaPlayer.PlayerState playerState)
+            {
+                if(playerState == CustomMediaPlayer.PlayerState.Playing)
+                {
+                    playButton.setImageResource(android.R.drawable.ic_media_pause);
+                }
+                else
+                {
+                    playButton.setImageResource(android.R.drawable.ic_media_play);
+                    if(playerState == CustomMediaPlayer.PlayerState.Prepared ||
+                            playerState == CustomMediaPlayer.PlayerState.TrackNotSet)
+                    {
+                        synchronized (this)
+                        {
+                            seekBar.setProgress(0);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     private void setupCurrentTrackTitleView()
     {
         final TextView currentTitleText = findViewById(R.id.current_title_text);
@@ -136,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
 
     private void setupPlayPauseButton()
     {
-        ImageButton playButton = findViewById(R.id.play_pause_button);
+        playButton = findViewById(R.id.play_pause_button);
         playButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -158,8 +186,12 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
             {
                 if(isMovedByUser)
                 {
-                    int percent = (int)((((float)(progressPoints))/seekBar.getMax())*100);
-                    CustomMediaPlayer.getInstance().moveToPercentOfTrack(percent);
+                    if(CustomMediaPlayer.getInstance().getPlayerStateLiveData().getValue()
+                            != CustomMediaPlayer.PlayerState.TrackNotSet)
+                    {
+                        int percent = (int) ((((float) (progressPoints)) / seekBar.getMax()) * 100);
+                        CustomMediaPlayer.getInstance().moveToPercentOfTrack(percent);
+                    }
                 }
             }
 
@@ -178,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
                 while(true)
                 {
                     mediaPlayer = CustomMediaPlayer.getInstance().getMediaPlayer();
-                    if(mediaPlayer.isPlaying())
+                    if(CustomMediaPlayer.getInstance().getPlayerStateLiveData().getValue() == CustomMediaPlayer.PlayerState.Playing)
                     {
                         float timeElapsed = mediaPlayer.getCurrentPosition();
                         float duration = mediaPlayer.getDuration();

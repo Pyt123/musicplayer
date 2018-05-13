@@ -1,6 +1,5 @@
 package com.example.dawid.musicplayer;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
