@@ -28,9 +28,17 @@ public final class TrackData
         liveDataTrackList.setValue(tracks);
     }
 
-    public void setCurrentTrack(int idOfTrackInData)
+    public void setCurrentTrack(int trackId)
     {
-        liveDataCurrentTrack.setValue(liveDataTrackList.getValue().get(idOfTrackInData));
+        List<Track> list = liveDataTrackList.getValue();
+        for(int i = 0; i < list.size(); i++)
+        {
+            if(list.get(i).getTrackId() == trackId)
+            {
+                liveDataCurrentTrack.setValue(liveDataTrackList.getValue().get(i));
+                return;
+            }
+        }
     }
 
     public Track getCurrentTrack()

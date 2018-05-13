@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
     {
         super.onCreate(savedInstanceState);
         lifecycleRegistry = new LifecycleRegistry(this);
-        EventObserver eventObserver = new EventObserver(this);
+        //EventObserver eventObserver = new EventObserver(this);
         musicViewModel = ViewModelProviders.of(this).get(MusicViewModel.class);
         setupUi();
 
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
     {
         final TextView currentTitleText = findViewById(R.id.current_title_text);
         currentTitleText.setText("");
-        musicViewModel.getTrackData().getLiveDataCurrentTrack().observe(this, new Observer<Track>()
+        CustomMediaPlayer.getInstance().getTrackData().getLiveDataCurrentTrack().observe(this, new Observer<Track>()
         {
             @Override
             public void onChanged(@Nullable Track track)
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
     {
         RecyclerView trackList = findViewById(R.id.music_list);
         trackList.setLayoutManager(new LinearLayoutManager(this));
-        trackList.setAdapter(new TrackAdapter(this, musicViewModel.getTrackData(), trackList));
+        trackList.setAdapter(new TrackAdapter(this, CustomMediaPlayer.getInstance().getTrackData(), trackList));
     }
 
     private void setupPlayPauseButton()

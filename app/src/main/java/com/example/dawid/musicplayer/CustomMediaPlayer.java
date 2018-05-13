@@ -8,12 +8,21 @@ public class CustomMediaPlayer
 {
     private static CustomMediaPlayer instance = new CustomMediaPlayer();
     private MediaPlayer mediaPlayer = new MediaPlayer();
+    private TrackData trackData;
 
-    private CustomMediaPlayer() { }
+    private CustomMediaPlayer()
+    {
+        trackData = new TrackData();
+    }
 
     public static CustomMediaPlayer getInstance()
     {
         return instance;
+    }
+
+    public TrackData getTrackData()
+    {
+        return trackData;
     }
 
     public void startNewTrack(Context context, int trackId)
@@ -32,6 +41,7 @@ public class CustomMediaPlayer
     {
         mediaPlayer = MediaPlayer.create(context, trackId);
         mediaPlayer.seekTo(0);
+        trackData.setCurrentTrack(trackId);
     }
 
     public void startPlaying()
