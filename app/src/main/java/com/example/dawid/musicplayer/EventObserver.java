@@ -6,12 +6,12 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.OnLifecycleEvent;
 
-public class PlayerObserver implements LifecycleObserver
+public class EventObserver implements LifecycleObserver
 {
     private Activity ownerActivity;
     private LifecycleOwner lifecycleOwner;
 
-    public PlayerObserver(LifecycleOwner lifecycleOwner)
+    public EventObserver(LifecycleOwner lifecycleOwner)
     {
         this.lifecycleOwner = lifecycleOwner;
         ownerActivity = (Activity)lifecycleOwner;

@@ -47,4 +47,36 @@ public class CustomMediaPlayer
     {
         mediaPlayer.pause();
     }
+
+    public void moveTime(int milisecs)
+    {
+        int targetTime = mediaPlayer.getCurrentPosition() + milisecs;
+        if(targetTime > mediaPlayer.getDuration())
+        {
+            targetTime = mediaPlayer.getDuration();
+        }
+        else if(targetTime < 0)
+        {
+            targetTime = 0;
+        }
+        mediaPlayer.seekTo(targetTime);
+    }
+
+    public void moveToPercentOfTrack(int percent)
+    {
+        int targetMilisecs = mediaPlayer.getDuration() * percent / 100;
+        mediaPlayer.seekTo(targetMilisecs);
+    }
+
+    public void handleStartPauseButtonClicked()
+    {
+        if(mediaPlayer.isPlaying())
+        {
+            pausePlaying();
+        }
+        else
+        {
+            startPlaying();
+        }
+    }
 }

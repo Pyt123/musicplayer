@@ -16,4 +16,19 @@ public class MusicViewModel extends ViewModel
     {
         return trackData;
     }
+
+    public void handleStartPauseButtonClicked()
+    {
+        CustomMediaPlayer.getInstance().handleStartPauseButtonClicked();
+    }
+
+    public void handleForwardButtonClicked()
+    {
+        CustomMediaPlayer.getInstance().moveTime(10000);
+    }
+
+    public void handleBackwardButtonClicked()
+    {
+        CustomMediaPlayer.getInstance().moveTime(-10000);
+    }
 }
