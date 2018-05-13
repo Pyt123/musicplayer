@@ -1,5 +1,6 @@
 package com.example.dawid.musicplayer;
 
+import android.app.Activity;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
@@ -124,10 +125,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
                     if(playerState == CustomMediaPlayer.PlayerState.Prepared ||
                             playerState == CustomMediaPlayer.PlayerState.TrackNotSet)
                     {
-                        synchronized (this)
-                        {
-                            seekBar.setProgress(0);
-                        }
+                        seekBar.setProgress(0);
                     }
                 }
             }
