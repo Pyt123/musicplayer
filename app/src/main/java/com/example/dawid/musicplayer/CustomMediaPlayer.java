@@ -7,9 +7,11 @@ import android.support.annotation.Nullable;
 
 public class CustomMediaPlayer
 {
-    public enum PlayerState {TrackNotSet, Prepared, Paused, Playing, Waiting}
+    public enum PlayerState {TrackNotSet, Prepared, Paused, Playing, TrackEnded}
     public enum Mode { LoopAll, LoopOne, PlayOnceAll, PlayOnce }
+
     private static CustomMediaPlayer instance = new CustomMediaPlayer();
+    
     private MediaPlayer mediaPlayer;
     private MutableLiveData<PlayerState> playerStateLiveData = new MutableLiveData<>();
     private MutableLiveData<Mode> mode = new MutableLiveData<>();
@@ -136,7 +138,7 @@ public class CustomMediaPlayer
                         {
                             if (getMediaPlayer().getCurrentPosition() >= getMediaPlayer().getDuration())
                             {
-                                playerStateLiveData.postValue(PlayerState.Waiting);
+                                playerStateLiveData.postValue(PlayerState.TrackEnded);
                             }
                         }
                     }
@@ -159,7 +161,7 @@ public class CustomMediaPlayer
             @Override
             public void onChanged(@Nullable PlayerState playerState)
             {
-                if(playerState == PlayerState.Waiting)
+                if(playerState == PlayerState.TrackEnded)
                 {
                     Track track = trackData.getNextTrack(false);
                     if(track != null)
