@@ -53,7 +53,7 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             @Override
             public void onClick(View view)
             {
-                CustomMediaPlayer.getInstance().startNewTrack(context, track.getTrackId());
+                CustomMediaPlayer.getInstance().startNewTrack(track.getTrackId());
             }
         });
     }

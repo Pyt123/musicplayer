@@ -29,6 +29,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.dawid.musicplayer.MainActivity"/>
         </activity>
+
+        <service
+            android:enabled="true"
+            android:name=".MusicService"/>
+
     </application>
 
 </manifest>

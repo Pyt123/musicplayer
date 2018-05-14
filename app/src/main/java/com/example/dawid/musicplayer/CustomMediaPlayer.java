@@ -60,10 +60,10 @@ public class CustomMediaPlayer
         return playerStateLiveData;
     }
 
-    public void startNewTrack(Context context, int trackId)
+    public void startNewTrack(int trackId)
     {
         stopPlaying();
-        setNewTrack(context, trackId);
+        setNewTrack(trackId);
         startPlaying();
     }
 
@@ -72,11 +72,11 @@ public class CustomMediaPlayer
         return mediaPlayer;
     }
 
-    public void setNewTrack(Context context, int trackId)
+    public void setNewTrack(int trackId)
     {
         mediaPlayer.reset();
         mediaPlayer.release();
-        mediaPlayer = MediaPlayer.create(context, trackId);
+        mediaPlayer = MediaPlayer.create(MusicService.getContext(), trackId);
         mediaPlayer.seekTo(0);
         trackData.setCurrentTrack(trackId);
         playerStateLiveData.setValue(PlayerState.Prepared);

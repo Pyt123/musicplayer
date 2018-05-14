@@ -1,6 +1,6 @@
 package com.example.dawid.musicplayer;
 
-import android.app.Activity;
+import android.app.Service;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
         //EventObserver eventObserver = new EventObserver(this);
         musicViewModel = ViewModelProviders.of(this).get(MusicViewModel.class);
         setupUi();
+
+        Intent serviceIntent = new Intent(this, MusicService.class);
+        startService(serviceIntent);
 
         lifecycleRegistry.markState(Lifecycle.State.CREATED);
     }
