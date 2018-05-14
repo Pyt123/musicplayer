@@ -1,7 +1,6 @@
 package com.example.dawid.musicplayer;
 
 import android.arch.lifecycle.MutableLiveData;
-import android.content.Context;
 import android.media.MediaPlayer;
 
 public class CustomMediaPlayer
@@ -10,7 +9,6 @@ public class CustomMediaPlayer
 
     private static CustomMediaPlayer instance = new CustomMediaPlayer();
     private MutableLiveData<PlayerState> playerStateLiveData = new MutableLiveData<>();
-    private MediaPlayer mediaPlayer = new MediaPlayer();
     private TrackData trackData;
 
     private CustomMediaPlayer()
@@ -26,9 +24,9 @@ public class CustomMediaPlayer
                 {
                     if(playerStateLiveData.getValue() == PlayerState.Playing)
                     {
-                        synchronized (mediaPlayer)
+                        synchronized (getMediaPlayer())
                         {
-                            if (mediaPlayer.getCurrentPosition() >= mediaPlayer.getDuration())
+                            if (getMediaPlayer().getCurrentPosition() >= getMediaPlayer().getDuration())
                             {
                                 playerStateLiveData.postValue(PlayerState.Prepared);
                             }
@@ -69,22 +67,22 @@ public class CustomMediaPlayer
 
     public MediaPlayer getMediaPlayer()
     {
-        return mediaPlayer;
+        return MusicService.getMediaPlayer();
     }
 
     public void setNewTrack(int trackId)
     {
-        mediaPlayer.reset();
-        mediaPlayer.release();
-        mediaPlayer = MediaPlayer.create(MusicService.getContext(), trackId);
-        mediaPlayer.seekTo(0);
+        getMediaPlayer().reset();
+        getMediaPlayer().release();
+        MusicService.setMediaPlayer(MediaPlayer.create(MusicService.getContext(), trackId));
+        getMediaPlayer().seekTo(0);
         trackData.setCurrentTrack(trackId);
         playerStateLiveData.setValue(PlayerState.Prepared);
     }
 
     public void startPlaying()
     {
-        mediaPlayer.start();
+        getMediaPlayer().start();
         playerStateLiveData.setValue(PlayerState.Playing);
     }
 
@@ -92,14 +90,14 @@ public class CustomMediaPlayer
     {
         if(playerStateLiveData.getValue() != PlayerState.TrackNotSet)
         {
-            mediaPlayer.stop();
+            getMediaPlayer().stop();
         }
         playerStateLiveData.setValue(PlayerState.Prepared);
     }
 
     public void pausePlaying()
     {
-        mediaPlayer.pause();
+        getMediaPlayer().pause();
         playerStateLiveData.setValue(PlayerState.Paused);
     }
 
@@ -108,22 +106,22 @@ public class CustomMediaPlayer
         if(playerStateLiveData.getValue() == PlayerState.TrackNotSet)
             return;
 
-        int targetTime = mediaPlayer.getCurrentPosition() + milisecs;
-        if(targetTime > mediaPlayer.getDuration())
+        int targetTime = getMediaPlayer().getCurrentPosition() + milisecs;
+        if(targetTime > getMediaPlayer().getDuration())
         {
-            targetTime = mediaPlayer.getDuration();
+            targetTime = getMediaPlayer().getDuration();
         }
         else if(targetTime < 0)
         {
             targetTime = 0;
         }
-        mediaPlayer.seekTo(targetTime);
+        getMediaPlayer().seekTo(targetTime);
     }
 
     public void moveToPercentOfTrack(int percent)
     {
-        int targetMilisecs = mediaPlayer.getDuration() * percent / 100;
-        mediaPlayer.seekTo(targetMilisecs);
+        int targetMilisecs = getMediaPlayer().getDuration() * percent / 100;
+        getMediaPlayer().seekTo(targetMilisecs);
     }
 
     public void handleStartPauseButtonClicked()

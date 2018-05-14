@@ -1,5 +1,7 @@
 package com.example.dawid.musicplayer;
 
+import android.app.ActivityManager;
+import android.app.IntentService;
 import android.app.Service;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
@@ -37,9 +39,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
         //EventObserver eventObserver = new EventObserver(this);
         musicViewModel = ViewModelProviders.of(this).get(MusicViewModel.class);
         setupUi();
-
-        Intent serviceIntent = new Intent(this, MusicService.class);
-        startService(serviceIntent);
+        setupService();
 
         lifecycleRegistry.markState(Lifecycle.State.CREATED);
     }
@@ -64,6 +64,29 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupService()
+    {
+        if(isServiceRunning())
+            return;
+
+        Intent intent = new Intent(this, MusicService.class);
+        intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        startForegroundService(intent);
+    }
+
+    private boolean isServiceRunning()
+    {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
+        {
+            if("com.example.dawid.musicplayer.MusicService".equals(service.service.getClassName()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setupUi()
