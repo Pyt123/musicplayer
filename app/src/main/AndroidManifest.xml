@@ -31,10 +31,7 @@
 
         <service
             android:enabled="true"
-            android:name=".MusicService"
-            android:label="MusicService"
-            android:exported="false"
-            android:process=":musicService"/>
+            android:name=".MusicService" />
 
     </application>
 

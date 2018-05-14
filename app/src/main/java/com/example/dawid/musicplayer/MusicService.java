@@ -23,8 +23,6 @@ public class MusicService extends Service
     public static final String NOTIFICATION_CHANNEL_ID = "4565";
     private static final String NOTIFICATION_CHANNEL_NAME = "Music Chanel";
 
-
-
     public static Context getContext()
     {
         return musicService;
@@ -76,9 +74,7 @@ public class MusicService extends Service
         NotificationCompat.
         mNotification.(getApplicationContext(), "MusicPlayer",
                 text, pi);
-        startForeground(NOTIFICATION_ID, mNotification);
-
-        startForeground(5, notification);*/
+        startForeground(NOTIFICATION_ID, mNotification);*/
     }
 
     @Override
@@ -87,8 +83,6 @@ public class MusicService extends Service
         musicService = this;
         customMediaPlayer = CustomMediaPlayer.getInstance();
         mediaPlayer = new MediaPlayer();
-        mediaPlayer = MediaPlayer.create(this, R.raw.arctic_monkeys_do_i_wanna_lnow);
-        mediaPlayer.start();
         startForeground(1, mNotification);
         return START_STICKY;
     }
