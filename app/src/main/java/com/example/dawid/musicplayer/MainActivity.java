@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
     {
         Intent intent = new Intent(this, MusicService.class);
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-        startForegroundService(intent);
+        startService(intent);
+        //startForegroundService(intent);
     }
 
     private void setupUi()
