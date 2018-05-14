@@ -2,13 +2,17 @@ package com.example.dawid.musicplayer;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
 
 public class CustomMediaPlayer
 {
     public enum PlayerState {TrackNotSet, Prepared, Paused, Playing, TrackEnded}
-    public enum Mode { LoopAll, LoopOne, PlayOnceAll, PlayOnce }
+    public enum Mode { LoopAll, LoopOne, PlayOnceAll, PlayOnce, PlayRandom }
+    private long timeToPlayInMilisecs = 1;
+    private long lastTime;
 
     private static CustomMediaPlayer instance = new CustomMediaPlayer();
 
@@ -16,6 +20,7 @@ public class CustomMediaPlayer
     private MutableLiveData<PlayerState> playerStateLiveData = new MutableLiveData<>();
     private MutableLiveData<Mode> mode = new MutableLiveData<>();
     private TrackData trackData;
+    private MusicService musicService;
 
     private CustomMediaPlayer()
     {
@@ -23,7 +28,13 @@ public class CustomMediaPlayer
         trackData = new TrackData();
         playerStateLiveData.setValue(PlayerState.TrackNotSet);
         mode.setValue(Mode.LoopAll);
-        handlePlayerStateChange();
+        handleEndOfTrack();
+    }
+
+    public void provideService(MusicService service)
+    {
+        musicService = service;
+        handleSettingsChange(MusicService.getContext().getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE));
     }
 
     public static CustomMediaPlayer getInstance()
@@ -86,6 +97,11 @@ public class CustomMediaPlayer
         {
             getMediaPlayer().stop();
         }
+        if(mode.getValue() == Mode.PlayRandom)
+        {
+            timeToPlayInMilisecs -= System.currentTimeMillis() - lastTime;
+            lastTime = System.currentTimeMillis();
+        }
         playerStateLiveData.postValue(PlayerState.TrackNotSet);
     }
 
@@ -130,7 +146,7 @@ public class CustomMediaPlayer
         }
     }
 
-    private void handlePlayerStateChange()
+    private void handleEndOfTrack()
     {
         playerStateLiveData.observeForever(new Observer<PlayerState>()
         {
@@ -139,10 +155,32 @@ public class CustomMediaPlayer
             {
                 if(playerState == PlayerState.TrackEnded)
                 {
-                    Track track = trackData.getNextTrack(false);
-                    if(track != null)
+                    Track nextTrack = null;
+                    switch (mode.getValue())
                     {
-                        startNewTrack(track.getTrackId());
+                        case LoopAll:
+                            nextTrack = trackData.getNextTrack(true);
+                            break;
+                        case LoopOne:
+                            nextTrack = trackData.getLiveDataCurrentTrack().getValue();
+                            break;
+                        case PlayOnceAll:
+                            nextTrack = trackData.getNextTrack(false);
+                            break;
+                        case PlayOnce:
+                            break;
+                        case PlayRandom:
+                            timeToPlayInMilisecs -= System.currentTimeMillis() - lastTime;
+                            if(timeToPlayInMilisecs > 0)
+                            {
+                                nextTrack = trackData.getRandomTrack();
+                                lastTime = System.currentTimeMillis();
+                            }
+                            break;
+                    }
+                    if(nextTrack != null)
+                    {
+                        startNewTrack(nextTrack.getTrackId());
                     }
                     else
                     {
@@ -152,5 +190,31 @@ public class CustomMediaPlayer
                 }
             }
         });
+    }
+
+    public void handleSettingsChange(SharedPreferences sharedPrefs)
+    {
+        int t = sharedPrefs.getInt(SettingsActivity.TIME_KEY, 30);
+        int m = sharedPrefs.getInt(SettingsActivity.MODE_KEY, 0);
+        switch(m)
+        {
+            case 0:
+                mode.postValue(Mode.LoopAll);
+                break;
+            case 1:
+                mode.postValue(Mode.LoopOne);
+                break;
+            case 2:
+                mode.postValue(Mode.PlayOnceAll);
+                break;
+            case 3:
+                mode.postValue(Mode.PlayOnce);
+                break;
+            case 4:
+                mode.postValue(Mode.PlayRandom);
+                lastTime = System.currentTimeMillis();
+                break;
+        }
+        timeToPlayInMilisecs = t * 60000;
     }
 }

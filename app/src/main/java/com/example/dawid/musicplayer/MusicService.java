@@ -85,6 +85,7 @@ public class MusicService extends Service
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         musicService = this;
+        CustomMediaPlayer.getInstance().provideService(this);
         startForeground(SERVICE_ID, mNotification);
         return START_STICKY;
     }

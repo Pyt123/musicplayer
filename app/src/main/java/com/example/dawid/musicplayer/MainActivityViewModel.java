@@ -2,9 +2,9 @@ package com.example.dawid.musicplayer;
 
 import android.arch.lifecycle.ViewModel;
 
-public class MusicViewModel extends ViewModel
+public class MainActivityViewModel extends ViewModel
 {
-    public MusicViewModel()
+    public MainActivityViewModel()
     {
         super();
     }

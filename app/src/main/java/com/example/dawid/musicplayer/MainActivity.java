@@ -24,7 +24,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity implements LifecycleOwner
 {
     private LifecycleRegistry lifecycleRegistry;
-    private MusicViewModel musicViewModel;
+    private MainActivityViewModel mainActivityViewModel;
     private SeekBar seekBar;
     private ImageButton playButton;
 
@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
     {
         super.onCreate(savedInstanceState);
         lifecycleRegistry = new LifecycleRegistry(this);
-        //EventObserver eventObserver = new EventObserver(this);
-        musicViewModel = ViewModelProviders.of(this).get(MusicViewModel.class);
+        mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+
         setupUi();
         setupService();
 
@@ -64,6 +64,10 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
         {
             case R.id.action_about:
                 startActivity(new Intent(this, AboutActivity.class));
+                return true;
+
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
         }
 
@@ -104,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
             @Override
             public void onClick(View view)
             {
-                musicViewModel.handleForwardButtonClicked();
+                mainActivityViewModel.handleForwardButtonClicked();
             }
         });
     }
@@ -117,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
             @Override
             public void onClick(View view)
             {
-                musicViewModel.handleBackwardButtonClicked();
+                mainActivityViewModel.handleBackwardButtonClicked();
             }
         });
     }
@@ -177,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
             @Override
             public void onClick(View view)
             {
-                musicViewModel.handleStartPauseButtonClicked();
+                mainActivityViewModel.handleStartPauseButtonClicked();
             }
         });
     }

@@ -15,7 +15,8 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="uk.ac.shef.oak.ActivityRecognition.RestartSensor"/>
+                <action android:name="uk.ac.shef.oak.ActivityRecognition.RestartSensor" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -26,13 +27,22 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.dawid.musicplayer.MainActivity"/>
+                android:value="com.example.dawid.musicplayer.MainActivity" />
         </activity>
 
         <service
-            android:enabled="true"
-            android:name=".MusicService" />
+            android:name=".MusicService"
+            android:enabled="true" />
 
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.dawid.musicplayer.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

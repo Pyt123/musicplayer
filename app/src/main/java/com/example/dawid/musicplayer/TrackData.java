@@ -5,11 +5,14 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public final class TrackData
 {
     private final MutableLiveData<List<Track>> liveDataTrackList = new MutableLiveData<>();
     private final MutableLiveData<Track> liveDataCurrentTrack = new MutableLiveData<>();
+
+    private final Random random = new Random();
 
     public TrackData()
     {
@@ -73,5 +76,18 @@ public final class TrackData
     public MutableLiveData<List<Track>> getLiveDataTrackList()
     {
         return liveDataTrackList;
+    }
+
+    public Track getRandomTrack()
+    {
+        int size = getTracks().size();
+        if(size > 0)
+        {
+            return getTracks().get(random.nextInt(size));
+        }
+        else
+        {
+            return null;
+        }
     }
 }
