@@ -11,7 +11,7 @@ public class CustomMediaPlayer
     public enum Mode { LoopAll, LoopOne, PlayOnceAll, PlayOnce }
 
     private static CustomMediaPlayer instance = new CustomMediaPlayer();
-    
+
     private MediaPlayer mediaPlayer;
     private MutableLiveData<PlayerState> playerStateLiveData = new MutableLiveData<>();
     private MutableLiveData<Mode> mode = new MutableLiveData<>();
@@ -23,7 +23,6 @@ public class CustomMediaPlayer
         trackData = new TrackData();
         playerStateLiveData.setValue(PlayerState.TrackNotSet);
         mode.setValue(Mode.LoopAll);
-        runThreadForPlayerStateChanging();
         handlePlayerStateChange();
     }
 
@@ -61,6 +60,14 @@ public class CustomMediaPlayer
             getMediaPlayer().reset();
             getMediaPlayer().release();
             mediaPlayer = MediaPlayer.create(MusicService.getContext(), trackId);
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
+            {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer)
+                {
+                    playerStateLiveData.postValue(PlayerState.TrackEnded);
+                }
+            });
         }
         getMediaPlayer().seekTo(0);
         trackData.setCurrentTrack(trackId);
@@ -122,37 +129,6 @@ public class CustomMediaPlayer
             startPlaying();
         }
     }
-
-    private void runThreadForPlayerStateChanging()
-    {
-        new Thread()
-        {
-            @Override
-            public void run()
-            {
-                while(true)
-                {
-                    if(playerStateLiveData.getValue() == PlayerState.Playing)
-                    {
-                        synchronized (getMediaPlayer())
-                        {
-                            if (getMediaPlayer().getCurrentPosition() >= getMediaPlayer().getDuration())
-                            {
-                                playerStateLiveData.postValue(PlayerState.TrackEnded);
-                            }
-                        }
-                    }
-
-                    synchronized (this)
-                    {
-                        try { wait(50);}
-                        catch (InterruptedException e) { e.printStackTrace(); }
-                    }
-                }
-            }
-        }.start();
-    }
-
 
     private void handlePlayerStateChange()
     {
