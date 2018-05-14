@@ -1,46 +1,28 @@
 package com.example.dawid.musicplayer;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.media.MediaPlayer;
+import android.support.annotation.Nullable;
 
 public class CustomMediaPlayer
 {
-    public enum PlayerState {TrackNotSet, Prepared, Paused, Playing}
-
+    public enum PlayerState {TrackNotSet, Prepared, Paused, Playing, Waiting}
+    public enum Mode { LoopAll, LoopOne, PlayOnceAll, PlayOnce }
     private static CustomMediaPlayer instance = new CustomMediaPlayer();
+    private MediaPlayer mediaPlayer;
     private MutableLiveData<PlayerState> playerStateLiveData = new MutableLiveData<>();
+    private MutableLiveData<Mode> mode = new MutableLiveData<>();
     private TrackData trackData;
 
     private CustomMediaPlayer()
     {
+        mediaPlayer = new MediaPlayer();
         trackData = new TrackData();
         playerStateLiveData.setValue(PlayerState.TrackNotSet);
-        new Thread()
-        {
-            @Override
-            public void run()
-            {
-                while(true)
-                {
-                    if(playerStateLiveData.getValue() == PlayerState.Playing)
-                    {
-                        synchronized (getMediaPlayer())
-                        {
-                            if (getMediaPlayer().getCurrentPosition() >= getMediaPlayer().getDuration())
-                            {
-                                playerStateLiveData.postValue(PlayerState.Prepared);
-                            }
-                        }
-                    }
-
-                    synchronized (this)
-                    {
-                        try { wait(50);}
-                        catch (InterruptedException e) { e.printStackTrace(); }
-                    }
-                }
-            }
-        }.start();
+        mode.setValue(Mode.LoopAll);
+        runThreadForPlayerStateChanging();
+        handlePlayerStateChange();
     }
 
     public static CustomMediaPlayer getInstance()
@@ -67,23 +49,26 @@ public class CustomMediaPlayer
 
     public MediaPlayer getMediaPlayer()
     {
-        return MusicService.getMediaPlayer();
+        return mediaPlayer;
     }
 
     public void setNewTrack(int trackId)
     {
-        getMediaPlayer().reset();
-        getMediaPlayer().release();
-        MusicService.setMediaPlayer(MediaPlayer.create(MusicService.getContext(), trackId));
+        synchronized (mediaPlayer)
+        {
+            getMediaPlayer().reset();
+            getMediaPlayer().release();
+            mediaPlayer = MediaPlayer.create(MusicService.getContext(), trackId);
+        }
         getMediaPlayer().seekTo(0);
         trackData.setCurrentTrack(trackId);
-        playerStateLiveData.setValue(PlayerState.Prepared);
+        playerStateLiveData.postValue(PlayerState.Prepared);
     }
 
     public void startPlaying()
     {
         getMediaPlayer().start();
-        playerStateLiveData.setValue(PlayerState.Playing);
+        playerStateLiveData.postValue(PlayerState.Playing);
     }
 
     public void stopPlaying()
@@ -92,13 +77,13 @@ public class CustomMediaPlayer
         {
             getMediaPlayer().stop();
         }
-        playerStateLiveData.setValue(PlayerState.Prepared);
+        playerStateLiveData.postValue(PlayerState.TrackNotSet);
     }
 
     public void pausePlaying()
     {
         getMediaPlayer().pause();
-        playerStateLiveData.setValue(PlayerState.Paused);
+        playerStateLiveData.postValue(PlayerState.Paused);
     }
 
     public void moveTime(int milisecs)
@@ -134,5 +119,60 @@ public class CustomMediaPlayer
         {
             startPlaying();
         }
+    }
+
+    private void runThreadForPlayerStateChanging()
+    {
+        new Thread()
+        {
+            @Override
+            public void run()
+            {
+                while(true)
+                {
+                    if(playerStateLiveData.getValue() == PlayerState.Playing)
+                    {
+                        synchronized (getMediaPlayer())
+                        {
+                            if (getMediaPlayer().getCurrentPosition() >= getMediaPlayer().getDuration())
+                            {
+                                playerStateLiveData.postValue(PlayerState.Waiting);
+                            }
+                        }
+                    }
+
+                    synchronized (this)
+                    {
+                        try { wait(50);}
+                        catch (InterruptedException e) { e.printStackTrace(); }
+                    }
+                }
+            }
+        }.start();
+    }
+
+
+    private void handlePlayerStateChange()
+    {
+        playerStateLiveData.observeForever(new Observer<PlayerState>()
+        {
+            @Override
+            public void onChanged(@Nullable PlayerState playerState)
+            {
+                if(playerState == PlayerState.Waiting)
+                {
+                    Track track = trackData.getNextTrack(false);
+                    if(track != null)
+                    {
+                        startNewTrack(track.getTrackId());
+                    }
+                    else
+                    {
+                        trackData.getLiveDataCurrentTrack().postValue(null);
+                        stopPlaying();
+                    }
+                }
+            }
+        });
     }
 }

@@ -1,8 +1,5 @@
 package com.example.dawid.musicplayer;
 
-import android.app.ActivityManager;
-import android.app.IntentService;
-import android.app.Service;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
@@ -45,6 +42,13 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
     }
 
     @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        lifecycleRegistry.markState(Lifecycle.State.DESTROYED);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -68,25 +72,9 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
 
     private void setupService()
     {
-        if(isServiceRunning())
-            return;
-
         Intent intent = new Intent(this, MusicService.class);
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         startForegroundService(intent);
-    }
-
-    private boolean isServiceRunning()
-    {
-        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
-        {
-            if("com.example.dawid.musicplayer.MusicService".equals(service.service.getClassName()))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void setupUi()
@@ -148,11 +136,6 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
                 else
                 {
                     playButton.setImageResource(android.R.drawable.ic_media_play);
-                    if(playerState == CustomMediaPlayer.PlayerState.Prepared ||
-                            playerState == CustomMediaPlayer.PlayerState.TrackNotSet)
-                    {
-                        seekBar.setProgress(0);
-                    }
                 }
             }
         });
@@ -233,12 +216,15 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
             {
                 while(true)
                 {
-                    mediaPlayer = CustomMediaPlayer.getInstance().getMediaPlayer();
-                    if(CustomMediaPlayer.getInstance().getPlayerStateLiveData().getValue() == CustomMediaPlayer.PlayerState.Playing)
+                    synchronized (CustomMediaPlayer.getInstance().getMediaPlayer())
                     {
-                        float timeElapsed = mediaPlayer.getCurrentPosition();
-                        float duration = mediaPlayer.getDuration();
-                        seekBar.setProgress((int)(timeElapsed / duration * seekBar.getMax()));
+                        mediaPlayer = CustomMediaPlayer.getInstance().getMediaPlayer();
+                        if(CustomMediaPlayer.getInstance().getPlayerStateLiveData().getValue() == CustomMediaPlayer.PlayerState.Playing)
+                        {
+                            float timeElapsed = mediaPlayer.getCurrentPosition();
+                            float duration = mediaPlayer.getDuration();
+                            seekBar.setProgress((int)(timeElapsed / duration * seekBar.getMax()));
+                        }
                     }
 
                     synchronized (this)

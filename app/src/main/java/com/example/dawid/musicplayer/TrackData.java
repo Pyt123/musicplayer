@@ -1,6 +1,7 @@
 package com.example.dawid.musicplayer;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +35,29 @@ public final class TrackData
         {
             if(list.get(i).getTrackId() == trackId)
             {
-                liveDataCurrentTrack.setValue(liveDataTrackList.getValue().get(i));
+                liveDataCurrentTrack.postValue(liveDataTrackList.getValue().get(i));
                 return;
             }
         }
+    }
+
+    @Nullable
+    public Track getNextTrack(boolean looped)
+    {
+        Track currentTrack = liveDataCurrentTrack.getValue();
+        if(currentTrack == null)
+            return null;
+
+        int nextIndex = liveDataTrackList.getValue().indexOf(currentTrack) + 1;
+        if(nextIndex < liveDataTrackList.getValue().size())
+        {
+            return liveDataTrackList.getValue().get(nextIndex);
+        }
+        else if(looped)
+        {
+            return liveDataTrackList.getValue().get(nextIndex % liveDataTrackList.getValue().size());
+        }
+        return null;
     }
 
     public List<Track> getTracks()
