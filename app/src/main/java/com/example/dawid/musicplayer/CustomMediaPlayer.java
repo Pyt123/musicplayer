@@ -1,8 +1,10 @@
 package com.example.dawid.musicplayer;
 
+import android.app.NotificationManager;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.support.annotation.Nullable;

@@ -3,6 +3,7 @@ package com.example.dawid.musicplayer;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
@@ -18,12 +19,15 @@ public class MusicService extends Service
 {
     private static MusicService musicService;
 
-    public static final String NOTIFICATION_CHANNEL_ID = "4565";
+    private static final String NOTIFICATION_CHANNEL_ID = "4565";
     private static final String NOTIFICATION_CHANNEL_NAME = "Music Chanel";
-    private static final int SERVICE_ID = 1;
+    public static final int SERVICE_ID = 1;
+    public static final String ACTION_CLOSE_SERVICE = "Close";
     private NotificationChannel notificationChannel;
     private NotificationManager notificationManager;
     private Notification mNotification;
+    private PendingIntent resumePendingIntent;
+    private PendingIntent closePendingIntent;
 
     public static Context getContext()
     {
@@ -39,6 +43,7 @@ public class MusicService extends Service
         {
             createNotificationChannel();
         }
+        createCancelPendingIntent();
         createNotification(null);
         observeTrackChanging();
     }
@@ -57,6 +62,16 @@ public class MusicService extends Service
             notificationManager.createNotificationChannel(notificationChannel);
     }
 
+    private void createCancelPendingIntent()
+    {
+        //Intent cancelIntent = new Intent(this, ServiceBroadcastReceiver.class);
+        //cancelIntent.setAction(ACTION_CLOSE_SERVICE);
+        //closePendingIntent =
+                //PendingIntent.getActivity(this, (int)System.currentTimeMillis()/2, cancelIntent, 0);
+        resumePendingIntent = PendingIntent.getActivity(this, (int)System.currentTimeMillis(),
+                new Intent(this, MainActivity.class), 0);
+    }
+
     private void createNotification(@Nullable Track track)
     {
         String title = "", author = "";
@@ -70,7 +85,11 @@ public class MusicService extends Service
                 .setSmallIcon(android.R.drawable.ic_media_play)
                 .setContentTitle(title)
                 .setContentText(author)
+                .setContentIntent(resumePendingIntent)
+                //.setContentIntent(closePendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                //.addAction(android.R.drawable.ic_media_play, "To Player", resumePendingIntent)
+                //.addAction(android.R.drawable.ic_menu_close_clear_cancel, ACTION_CLOSE_SERVICE, closePendingIntent);
 
         mNotification = mBuilder.build();
 

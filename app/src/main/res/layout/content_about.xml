@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="@color/nearly_black">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -38,6 +39,7 @@
             android:layout_marginTop="44dp"
             android:text="Dawid Antczak"
             android:textAlignment="center"
+            android:textColor="@color/full_white"
             android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -52,11 +54,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="@string/lorem_ipsum"
+            android:textColor="@color/grey_font"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name_text" />
 
-        <!-- This FrameLayout insets its children based on system windows using
-             android:fitsSystemWindows. -->
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

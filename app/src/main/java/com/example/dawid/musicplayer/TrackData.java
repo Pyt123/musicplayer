@@ -22,11 +22,11 @@ public final class TrackData
     private void initTracks()
     {
         ArrayList<Track> tracks = new ArrayList<>();
-        tracks.add(new Track(R.raw.arctic_monkeys_do_i_wanna_lnow, "Do I Wanna Know", "Arctic Monkeys", 265));
-        tracks.add(new Track(R.raw.jet_are_you_gonna_be_my_girl, "Are You Gonna Be My Girl", "Jet", 214));
-        tracks.add(new Track(R.raw.krzysztof_krawczyk_chcialem_byc, "Chciałem być", "Krzysztof Krawczyk", 221));
-        tracks.add(new Track(R.raw.muse_feeling_good, "Feeling Good", "Muse", 198));
-        tracks.add(new Track(R.raw.parostatek_krzysztof_krawczyk, "Parostatek", "Krzysztof Krawczyk", 166));
+        tracks.add(new Track(R.raw.maryla_rodowicz_malgoska, "Małgośka", "Maryla Rodowicz", 191));
+        tracks.add(new Track(R.raw.maryla_rodowicz_wsiasc_do_pociagu, "Wsiąść do pociągu", "Maryla Rodowicz", 256));
+        tracks.add(new Track(R.raw.maryla_rodowicz_niech_zyje_bal, "Niech żyje bal", "Maryla Rodowicz", 268));
+        tracks.add(new Track(R.raw.maryla_rodowicz_ale_to_juz_bylo, "Ale to już było", "Maryla Rodowicz", 155));
+        tracks.add(new Track(R.raw.maryla_rodowicz_sing_sing, "Sing Sing", "Maryla Rodowicz", 266));
 
         liveDataTrackList.setValue(tracks);
     }

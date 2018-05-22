@@ -88,7 +88,7 @@ public class SettingsActivity extends AppCompatActivity implements LifecycleOwne
         //int indexOfMode = sharedPrefs.getInt(MODE_KEY, 0);
         int time = sharedPrefs.getInt(TIME_KEY, 30);
         timeSeekbar.setProgress(time);
-        timeText.setText(String.valueOf(time));
+        timeText.setText(String.valueOf(time) + " min");
         //CustomMediaPlayer.Mode mode = CustomMediaPlayer.Mode.values()[indexOfMode];
 
     }
@@ -153,7 +153,7 @@ public class SettingsActivity extends AppCompatActivity implements LifecycleOwne
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b)
             {
-                timeText.setText(String.valueOf(i));
+                timeText.setText(String.valueOf(i) + " min");
             }
 
             @Override

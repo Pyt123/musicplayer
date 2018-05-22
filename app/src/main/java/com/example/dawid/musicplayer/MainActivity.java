@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner
                     synchronized (CustomMediaPlayer.getInstance().getMediaPlayer())
                     {
                         mediaPlayer = CustomMediaPlayer.getInstance().getMediaPlayer();
-                        if(CustomMediaPlayer.getInstance().getPlayerStateLiveData().getValue() == CustomMediaPlayer.PlayerState.Playing)
+                        if(CustomMediaPlayer.getInstance().getPlayerStateLiveData().getValue() != CustomMediaPlayer.PlayerState.TrackNotSet)
                         {
                             float timeElapsed = mediaPlayer.getCurrentPosition();
                             float duration = mediaPlayer.getDuration();

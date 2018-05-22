@@ -5,52 +5,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/purple"
+    android:background="@color/nearly_black"
     android:layout_marginBottom="8dp">
 
     <TextView
         android:id="@+id/track_title"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="35dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:gravity="center"
+        android:maxLines="2"
+        android:gravity="start"
         android:text="Parostatek"
-        android:textAlignment="textStart"
+        android:textAlignment="gravity"
+        android:textColor="@color/full_white"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/play_track_button"
-        app:layout_constraintHorizontal_bias="0.048"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/track_author"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="35dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:gravity="center"
+        android:maxLines="2"
+        android:gravity="start"
         android:text="Krzysztof Krawczyk"
-        android:textAlignment="textStart"
+        android:textAlignment="gravity"
+        android:textColor="@color/grey_font"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/play_track_button"
-        app:layout_constraintHorizontal_bias="0.052"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/track_title"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/track_title" />
 
     <TextView
         android:id="@+id/track_length"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:layout_marginTop="8dp"
-        android:gravity="center"
+        android:gravity="start"
+        android:textAlignment="gravity"
         android:text="21:37"
-        android:textAlignment="center"
+        android:textColor="@color/full_white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/play_track_button"
         app:layout_constraintStart_toStartOf="@+id/play_track_button"
@@ -58,14 +60,16 @@
 
     <ImageButton
         android:id="@+id/play_track_button"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_weight="1"
+        android:background="@color/green"
+        android:fadingEdge="horizontal|vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/track_length"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@android:drawable/ic_media_play"
+        android:layout_marginRight="16dp" />
 
 </android.support.constraint.ConstraintLayout>

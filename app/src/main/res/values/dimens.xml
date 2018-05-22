@@ -1,4 +1,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="music_list_gap">8dp</dimen>
+    <dimen name="fade_length">32dp</dimen>
 </resources>

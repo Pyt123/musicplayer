@@ -3,7 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="grey">#b1b1b1</color>
+    <color name="grey">#353535</color>
     <color name="purple">#e88eff</color>
-    <color name="nearly_black">#353535</color>
+    <color name="nearly_black">#1a1a20</color>
+    <color name="list_background">#121212</color>
+    <color name="green">#1cb552</color>
+    <color name="full_white">#ffffff</color>
+    <color name="grey_font">#929292</color>
 </resources>
