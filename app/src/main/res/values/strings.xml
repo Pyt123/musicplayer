@@ -4,4 +4,15 @@
     <string name="title_activity_about">About</string>
     <string name="title_activity_settings">Player Settings</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quam ex, sagittis nec mi in, varius auctor sem. Nunc risus quam, aliquet ac auctor id, accumsan sit amet mi.</string>
+    <string name="dawid_antczak">Dawid Antczak</string>
+    <string name="play_random">Play Random</string>
+    <string name="play_one_once">Play One Once</string>
+    <string name="loop_one">Loop One</string>
+    <string name="loop_all">Loop All</string>
+    <string name="mode">Mode:</string>
+    <string name="play_all_once">Play All Once</string>
+    <string name="example_seekbar_val">60</string>
+    <string name="example_title">Parostatek</string>
+    <string name="example_author">Krzysztof Krawczyk</string>
+    <string name="example_length">21:37</string>
 </resources>

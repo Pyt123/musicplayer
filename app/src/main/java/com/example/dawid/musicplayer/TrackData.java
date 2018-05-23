@@ -27,6 +27,12 @@ public final class TrackData
         tracks.add(new Track(R.raw.maryla_rodowicz_niech_zyje_bal, "Niech żyje bal", "Maryla Rodowicz", 268));
         tracks.add(new Track(R.raw.maryla_rodowicz_ale_to_juz_bylo, "Ale to już było", "Maryla Rodowicz", 155));
         tracks.add(new Track(R.raw.maryla_rodowicz_sing_sing, "Sing Sing", "Maryla Rodowicz", 266));
+        tracks.add(new Track(R.raw.darude_sandstorm, "Sandstorm", "Darude", 232));
+        tracks.add(new Track(R.raw.golec_uorkiestra_sciernisco, "Sciernisco", "Golec uOrkiestra", 218));
+        tracks.add(new Track(R.raw.akcent_przez_twe_oczy_zielone, "Przez twe oczy zielone", "Akcent", 264));
+        tracks.add(new Track(R.raw.modern_talking_youre_my_heart_youre_my_soul, "You're my heart, you're my soul", "Modern Talking", 195));
+        tracks.add(new Track(R.raw.rick_astley_never_gonna_give_you_up, "Never gonna give you up", "Rick Astley", 212));
+        tracks.add(new Track(R.raw.slawomir_milosc_w_zakopanem, "Miłość w Zakopanem", "Sławomir", 225));
 
         liveDataTrackList.setValue(tracks);
     }
