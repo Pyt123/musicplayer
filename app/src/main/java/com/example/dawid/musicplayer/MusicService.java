@@ -88,6 +88,7 @@ public class MusicService extends Service
                 .setContentIntent(resumePendingIntent)
                 //.setContentIntent(closePendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                //.addAction(android.R.drawable.ic_menu_close_clear_cancel, ACTION_CLOSE_SERVICE, closePendingIntent);
                 //.addAction(android.R.drawable.ic_media_play, "To Player", resumePendingIntent)
                 //.addAction(android.R.drawable.ic_menu_close_clear_cancel, ACTION_CLOSE_SERVICE, closePendingIntent);
 
